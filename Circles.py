@@ -4,6 +4,8 @@ import random
 from PIL import Image
 
 OUTER_CIRCLE_RADIUS = 100
+CIRCLE_COUNT = 3
+BREAK_CHANCE = 0.125
 
 # Monitor proportions
 INIT_WIDTH = 1920
@@ -17,7 +19,7 @@ COLOURS = (
     (215, 168, 64) # YELLOW
     #(150, 154, 165) # GREY
 )
-BG_COLOUR = COLOURS[0]   
+BG_COLOUR = COLOURS[0]  
 
 def fit(v, base):
     return base * round(v / base)
@@ -40,13 +42,9 @@ def generate_circle_points(r):
                 
     return quadrants
 
-def reverse_quadrant(q):
-    return (q + 2) % 4
-
 def generate():
     image = Image.new('RGB', (WIDTH, HEIGHT), BG_COLOUR)
     pixels = image.load()
-    quadrant_pairs = tuple((q, (q + 1) % 4) for q in range(4))
 
     for y1 in range(OUTER_CIRCLE_RADIUS, HEIGHT - OUTER_CIRCLE_RADIUS, OUTER_CIRCLE_RADIUS):
         for x1 in range(OUTER_CIRCLE_RADIUS, WIDTH - OUTER_CIRCLE_RADIUS, OUTER_CIRCLE_RADIUS):
@@ -62,41 +60,47 @@ def generate():
                     
     for y1 in range(OUTER_CIRCLE_RADIUS, HEIGHT, OUTER_CIRCLE_DIAMETER):
         for x1 in range(OUTER_CIRCLE_RADIUS, WIDTH, OUTER_CIRCLE_DIAMETER):
-            for circle_points in (OUTER_CIRCLE_POINTS, MIDDLE_CIRCLE_POINTS, INNER_CIRCLE_POINTS):
-                i = random.randrange(4)
+            for circle_points in CIRCLE_POINTS:
+                i1 = random.randrange(len(QUADRANT_SETS))
                 
-                colour = random.choice(COLOURS)
-                
-                for quadrant in quadrant_pairs[i]:
-                    for (x_offset, y_offset) in circle_points[quadrant]:
-                        x2 = x1 + x_offset 
-                        y2 = y1 + y_offset
-                        if 0 <= x2 < WIDTH and 0 <= y2 < HEIGHT:
-                            pixels[x2, y2] = colour
+                for i2 in (0, 1):
+                    colour = random.choice(COLOURS)
+                    
+                    for i3 in QUADRANT_SETS[i1][i2]:
+                        if random.random() <= BREAK_CHANCE:
+                            continue
                         
-                colour = random.choice(COLOURS)
-                
-                for quadrant in quadrant_pairs[reverse_quadrant(i)]:
-                    for (x_offset, y_offset) in circle_points[quadrant]:
-                        x2 = x1 + x_offset 
-                        y2 = y1 + y_offset
-                        if 0 <= x2 < WIDTH and 0 <= y2 < HEIGHT:
-                            pixels[x2, y2] = colour
+                        for (x_offset, y_offset) in circle_points[i3]:
+                            x2 = x1 + x_offset 
+                            y2 = y1 + y_offset
+                            if 0 <= x2 < WIDTH and 0 <= y2 < HEIGHT:
+                                pixels[x2, y2] = colour
             
     os.makedirs(r'.\Art\Generated Images', exist_ok=True)   
     image.save(r'.\Art\Generated Images\Circles 2.png')
     image.show()
     
 OUTER_CIRCLE_DIAMETER = OUTER_CIRCLE_RADIUS * 2
-MIDDLE_CIRCLE_RADIUS = OUTER_CIRCLE_RADIUS // 2
-INNER_CIRCLE_RADIUS = OUTER_CIRCLE_RADIUS // 3
 
 WIDTH = fit(INIT_WIDTH, OUTER_CIRCLE_DIAMETER)
 HEIGHT = fit(INIT_HEIGHT, OUTER_CIRCLE_DIAMETER)
 
-INNER_CIRCLE_POINTS = generate_circle_points(INNER_CIRCLE_RADIUS)
-MIDDLE_CIRCLE_POINTS = generate_circle_points(MIDDLE_CIRCLE_RADIUS)
-OUTER_CIRCLE_POINTS = generate_circle_points(OUTER_CIRCLE_RADIUS)
-    
+CIRCLE_POINTS = tuple(
+    generate_circle_points(OUTER_CIRCLE_RADIUS // o) for o in range(1, CIRCLE_COUNT + 1)
+)
+
+QUADRANT_SETS = [
+    (qp, tuple(
+        (q + 2) % 4 for q in qp)
+    ) for qp in
+        ((q, (q + 1) % 4) for q in range(4))
+]
+
+QUADRANT_SETS.extend(
+    (qp, tuple(
+        (q + 1) % 4 for q in qp)
+    ) for qp in ((q, (q + 2) % 4) for q in range(0, 4, 2))
+)
+
 if __name__ == '__main__':
     generate()
