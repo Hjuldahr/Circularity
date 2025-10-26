@@ -83,8 +83,8 @@ def generate():
                         if 0 <= x2 < WIDTH and 0 <= y2 < HEIGHT:
                             pixels[x2, y2] = colour
             
-    os.makedirs(r'.\Art\Generated Images', exist_ok=True)   
-    image.save(r'.\Art\Generated Images\Circles.png')
+    os.makedirs(r'.\Generated Images', exist_ok=True)   
+    image.save(r'.\Generated Images\Circles.png')
     image.show()
     
 OUTER_CIRCLE_DIAMETER = OUTER_CIRCLE_RADIUS * 2
@@ -97,4 +97,5 @@ INNER_CIRCLE_POINTS = generate_circle_points(INNER_CIRCLE_RADIUS)
 OUTER_CIRCLE_POINTS = generate_circle_points(OUTER_CIRCLE_RADIUS)
     
 if __name__ == '__main__':
+
     generate()
