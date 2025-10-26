@@ -62,7 +62,7 @@ def generate():
                     
     for y1 in range(OUTER_CIRCLE_RADIUS, HEIGHT, OUTER_CIRCLE_DIAMETER):
         for x1 in range(OUTER_CIRCLE_RADIUS, WIDTH, OUTER_CIRCLE_DIAMETER):
-            for circle_points in (OUTER_CIRCLE_POINTS, INNER_CIRCLE_POINTS):
+            for circle_points in (OUTER_CIRCLE_POINTS, MIDDLE_CIRCLE_POINTS, INNER_CIRCLE_POINTS):
                 i = random.randrange(4)
                 
                 colour = random.choice(COLOURS)
@@ -83,19 +83,20 @@ def generate():
                         if 0 <= x2 < WIDTH and 0 <= y2 < HEIGHT:
                             pixels[x2, y2] = colour
             
-    os.makedirs(r'.\Generated Images', exist_ok=True)   
-    image.save(r'.\Generated Images\Circles.png')
+    os.makedirs(r'.\Art\Generated Images', exist_ok=True)   
+    image.save(r'.\Art\Generated Images\Circles 2.png')
     image.show()
     
 OUTER_CIRCLE_DIAMETER = OUTER_CIRCLE_RADIUS * 2
+MIDDLE_CIRCLE_RADIUS = OUTER_CIRCLE_RADIUS // 2
 INNER_CIRCLE_RADIUS = OUTER_CIRCLE_RADIUS // 3
 
 WIDTH = fit(INIT_WIDTH, OUTER_CIRCLE_DIAMETER)
 HEIGHT = fit(INIT_HEIGHT, OUTER_CIRCLE_DIAMETER)
 
 INNER_CIRCLE_POINTS = generate_circle_points(INNER_CIRCLE_RADIUS)
+MIDDLE_CIRCLE_POINTS = generate_circle_points(MIDDLE_CIRCLE_RADIUS)
 OUTER_CIRCLE_POINTS = generate_circle_points(OUTER_CIRCLE_RADIUS)
     
 if __name__ == '__main__':
-
     generate()
