@@ -1,3 +1,3 @@
-![Example Output](./Circles.png)
+![Example Output](./Circles2.png)
 
-[Reddit Link](https://www.reddit.com/r/generative/comments/1og9ppn/circularity/)
+[Reddit Link to old Version](https://www.reddit.com/r/generative/comments/1og9ppn/circularity/)
